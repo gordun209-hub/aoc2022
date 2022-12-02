@@ -1,9 +1,10 @@
 package main
 
 import (
-	d1 "github.com/gordun209-hub/aoc2022/day1"
+	_ "github.com/gordun209-hub/aoc2022/day1"
+	d2 "github.com/gordun209-hub/aoc2022/day2"
 )
 
 func main() {
-	d1.Day1("input.txt")
+	d2.Day2()
 }
