@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -26,19 +27,35 @@ const sampleData = `1000
 
 10000`
 
+type data []int
+
+func (d data) Len() int {
+	return len(d)
+}
+
+func (d data) Less(x, y int) bool {
+	return x < y
+}
+func (a data) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+
 func Day1(path string) {
 	input, err := getInput(path)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(input)
 	max := 0
 	for _, val := range input {
 		if val > max {
 			max = val
 		}
 	}
-	fmt.Println(max)
+	sort.Ints(input)
+	fmt.Println(input[len(input)-3:])
+	total := 0
+	for _, v := range input[len(input)-3:] {
+		total += v
+	}
+	fmt.Println(total)
 }
 
 func getInput(path string) ([]int, error) {
