@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	d1.Day1()
+	d1.Day1("input.txt")
 }
