@@ -38,7 +38,7 @@ var point = 0
 // Y = Paper
 // Z = Scissors
 
-func getPoint(me, opponent string) int {
+func getPoint1(me, opponent string) int {
 	if me == "X" && opponent == "A" {
 		return 1 + 3
 	} else if me == "Y" && opponent == "B" {
@@ -55,6 +55,43 @@ func getPoint(me, opponent string) int {
 		return 2 + 0
 	} else if me == "Z" && opponent == "A" {
 		return 3 + 0
+	} else if me == "Z" && opponent == "B" {
+		return 3 + 6
+	}
+	return 0
+}
+
+// Opponent
+// A = Rock
+// B = paper
+// C = scissors
+
+// Me
+// X = lose
+// Y = draw
+// Z = win
+func getPoint2(me, opponent string) int {
+	// me scissors enemy rock
+	if me == "X" && opponent == "A" {
+		return 3 + 0
+		// opponent paper me paper
+	} else if me == "Y" && opponent == "B" {
+		return 2 + 3
+		// Z win enemy chose scissors me rock
+	} else if me == "Z" && opponent == "C" {
+		return 1 + 6
+	} else if me == "X" && opponent == "C" {
+		return 2 + 0
+		// opponent paper me rock because X means lose
+	} else if me == "X" && opponent == "B" {
+		return 1 + 0
+		// opponent chose rock me want draw so chose rock
+	} else if me == "Y" && opponent == "A" {
+		return 1 + 3
+	} else if me == "Y" && opponent == "C" {
+		return 3 + 3
+	} else if me == "Z" && opponent == "A" {
+		return 2 + 6
 	} else if me == "Z" && opponent == "B" {
 		return 3 + 6
 	}
@@ -96,7 +133,7 @@ func parseInput() []Hand {
 func Day2() {
 	handss := parseInput()
 	for _, v := range handss {
-		point += getPoint(v.me, v.opponent)
+		point += getPoint2(v.me, v.opponent)
 	}
 	fmt.Println(point)
 	// parseInput()
