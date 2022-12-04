@@ -1,7 +1,9 @@
 package day3
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -16,16 +18,28 @@ var priorities string = ""
 
 func Main() {
 	fmt.Println("day3")
+	//
+	// lines := strings.Split(data, "\n")
+	//
+	// for _, line := range lines {
+	// 	firsthalf, secondhalf := getHalf(line)
+	// 	fmt.Println(getCommon(firsthalf, secondhalf))
+	// 	priorities += getCommon(firsthalf, secondhalf)
+	// }
+	//
+	// fmt.Println(priorities)
+	// fmt.Println(getSumOfChars(priorities))
 
-	lines := strings.Split(data, "\n")
-
-	for _, line := range lines {
-		firsthalf, secondhalf := getHalf(line)
-		fmt.Println(getCommon(firsthalf, secondhalf))
-		priorities += getCommon(firsthalf, secondhalf)
+	file, err := os.Open("input3.txt")
+	if err != nil {
+		fmt.Println(err)
 	}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		firsthalf, secondhalf := getHalf(scanner.Text())
+		priorities += getCommon(firsthalf, secondhalf)
 
-	fmt.Println(priorities)
+	}
 	fmt.Println(getSumOfChars(priorities))
 }
 
