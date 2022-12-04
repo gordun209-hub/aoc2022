@@ -8,5 +8,5 @@ import (
 )
 
 func main() {
-	d4.Maim()
+	d4.Maim2()
 }
