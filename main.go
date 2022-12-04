@@ -7,5 +7,5 @@ import (
 )
 
 func main() {
-	d3.Main()
+	d3.Maim2()
 }

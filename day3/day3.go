@@ -7,40 +7,36 @@ import (
 	"strings"
 )
 
-const data = `vJrwpWtwJgWrhcsFMMfFFhFp
-jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-PmmdzqPrVvPwwTWBwg
-wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-ttgJtRGJQctTZtZT
-CrZsJsPPZsGzwwsLwLmpwMDw`
-
 var priorities string = ""
 
 func Main() {
-	fmt.Println("day3")
-	//
-	// lines := strings.Split(data, "\n")
-	//
-	// for _, line := range lines {
-	// 	firsthalf, secondhalf := getHalf(line)
-	// 	fmt.Println(getCommon(firsthalf, secondhalf))
-	// 	priorities += getCommon(firsthalf, secondhalf)
-	// }
-	//
-	// fmt.Println(priorities)
-	// fmt.Println(getSumOfChars(priorities))
-
 	file, err := os.Open("input3.txt")
 	if err != nil {
 		fmt.Println(err)
 	}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
+
 		firsthalf, secondhalf := getHalf(scanner.Text())
 		priorities += getCommon(firsthalf, secondhalf)
-
 	}
-	fmt.Println(getSumOfChars(priorities))
+
+	fmt.Println(priorities)
+}
+
+var ornekdata = `vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw`
+
+func createGroup(s string) []string {
+	return strings.Split(s, "")
+}
+
+func takeThreeLine(s []string) []string {
+	return s[:3]
 }
 
 func getSumOfChars(c string) int {
@@ -51,7 +47,11 @@ func getSumOfChars(c string) int {
 	return sum
 }
 
-// retunr half of given input
+func removeLastIndex(c []string) []string {
+	return c[:len(c)-1]
+}
+
+// // retunr half of given input
 func getHalf(data string) (a, b string) {
 	half := len(data) / 2
 	return data[:half], data[half:]
