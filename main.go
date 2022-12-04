@@ -7,5 +7,5 @@ import (
 )
 
 func main() {
-	d3.Day3()
+	d3.Main()
 }
