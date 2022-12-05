@@ -54,15 +54,9 @@ func Maim() {
 
 	rearrangements := getRearrengements(format)
 	// stackdata := stackData{
-	// 	1: {"W", "P", "G", "Z", "V", "S", "B"},
-	// 	2: {"F", "Z", "C", "B", "V", "J"},
-	// 	3: {"C", "D", "Z", "N", "H", "M", "L", "V"},
-	// 	4: {"B", "J", "F", "P", "Z", "M", "D", "L"},
-	// 	5: {"H", "Q", "B", "J", "G", "C", "F", "V"},
-	// 	6: {"B", "L", "S", "T", "Q", "F", "G"},
-	// 	7: {"V", "Z", "C", "G", "L"},
-	// 	8: {"G", "L", "N"},
-	// 	9: {"C", "H", "F", "J"},
+	// 	1: {"Z", "N"},
+	// 	2: {"M", "C", "D"},
+	// 	3: {"P"},
 	// }
 
 	stackdata2 := stackData{
@@ -76,7 +70,7 @@ func Maim() {
 		8: {"N", "G", "L"},
 		9: {"J", "F", "H", "C"},
 	}
-	st := applyInstructions(stackdata2, rearrangements)
+	st := applyInstructions2(stackdata2, rearrangements)
 	fmt.Println(st)
 
 	// fmt.Println(stackdata)
@@ -91,6 +85,19 @@ func applyInstructions(stackdata stackData, rearrangements []string) stackData {
 			stackdata[to] = append(stackdata[to], stackdata[from][len(stackdata[from])-1])
 			stackdata[from] = stackdata[from][:len(stackdata[from])-1]
 		}
+	}
+	return stackdata
+}
+
+func applyInstructions2(stackdata stackData, rearrangements []string) stackData {
+	for i := 0; i < len(rearrangements)-1; i++ {
+		move, from, to := parseInstruction(rearrangements[i])
+		if move > len(stackdata[from]) {
+			move = len(stackdata[from])
+		}
+		stackdata[to] = append(stackdata[to], stackdata[from][len(stackdata[from])-move:]...)
+		stackdata[from] = stackdata[from][:len(stackdata[from])-move]
+
 	}
 	return stackdata
 }
