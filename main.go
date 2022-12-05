@@ -9,5 +9,5 @@ import (
 )
 
 func main() {
-	d5.Main()
+	d5.Maim()
 }
