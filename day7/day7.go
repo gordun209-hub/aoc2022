@@ -35,8 +35,9 @@ $ ls
 const LIMIT = 100000
 
 var (
-	FS   = make(map[string]int)
-	path []string
+	FS      = make(map[string]int)
+	path    []string
+	maxUsed = 70000000 - 30000000
 )
 
 func ReadInput() *os.File {
@@ -61,9 +62,7 @@ func convertToInt(s string) int {
 }
 
 func Maim() {
-	path := []string{}
-	file := ReadInput()
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(strings.NewReader(sampleInput))
 	for scanner.Scan() {
 		line := scanner.Text()
 		words := fields(line)
@@ -75,25 +74,20 @@ func Maim() {
 				// append file name to path
 				path = append(path, words[2])
 			}
-			// ls ise salla
-		} else if words[1] == "ls" {
+		} else if words[1] == "ls" || words[0] == "dir" {
+			// list files
 			continue
-			// dir ise salla
-		} else if words[0] == "dir" {
-			continue
-			//
 		} else {
 			sz := words[0]
+			fmt.Println(path)
 			// Add this file's size to the current directory size *and* the size of all parents
 			for i := 1; i <= len(path); i++ {
 				w := convertToInt(sz)
-				// bura nasi calisio anlamadm magic
 				FS[strings.Join(path[:i], "/")] += w
 			}
 		}
 	}
 
-	maxUsed := 70000000 - 30000000
 	totalUsed := FS["/"]
 	NeedFree := totalUsed - maxUsed
 

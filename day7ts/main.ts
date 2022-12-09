@@ -1,3 +1,4 @@
+import * as l from "npm:lodash";
 const data = `$ cd /
 $ ls
 dir a
@@ -23,59 +24,79 @@ $ ls
 7214296 k`
 
 
-type Dir = {
-    name: string
-    size: number
-    children: Dir[]
-} | any
 
 
-const Limit = 100000
-const formatted = data.split("\n")
-
-
-
-const getDir = (name: string, size: number, children: Dir[]): Dir => {
-    return {
-        name,
-        size,
-        children
-    }
-}
-
-const parse = (formatted: string[]): Dir => {
-    const root = getDir("/", 0, [])
-    let currentDir = root
-    let currentLevel = 0
-    for (let i = 0; i < formatted.length; i++) {
-        const line = formatted[i]
-        const level = line.split("$").length - 1
-        const [size, name] = line.split(" ").filter(Boolean).reverse()
-        if (level > currentLevel) {
-            currentDir = currentDir.children[currentDir.children.length - 1]
-            currentLevel = level
-        } else if (level < currentLevel) {
-            currentDir = currentDir.parent
-            currentLevel = level
+function run1(input: Array<string>) {
+    let result = 0
+    let directories: any[] = []
+    let map = new Map()
+    for (const line of input) {
+        if (line.startsWith('$ cd')) {
+            const command = line.substring(5)
+            if (command === "..") {
+                directories.pop()
+            } else {
+                directories.push(command)
+            }
         }
-        if (size === "dir") {
-            const dir = getDir(name, 0, [])
-            dir.parent = currentDir
-            currentDir.children.push(dir)
-        } else {
-            currentDir.children.push({
-                name,
-                size: parseInt(size)
-            })
+        if (!isNaN(parseInt(line[0]))) {
+            const number = line.split(' ')
+            let key = ""
+            for (let i = 0; i < directories.length; i++) {
+                key += directories[i]
+                let totalNumber = l.parseInt(number[0])
+                if (map.get(key)) {
+                    totalNumber += l.parseInt(map.get(key))
+                }
+                map.set(key, totalNumber)
+            }
         }
     }
-    return root
+    for (const value of map) {
+        if (value[1] <= 100000) {
+            result += value[1]
+        }
+    }
+    console.log(result)
 }
 
+function run2(input: Array<string>) {
+    let result = 0
+    const spaceNeeded = 30000000
+    let spaceAvailable = 70000000
+    let directories: any[] = []
+    let map = new Map()
+    for (const line of input) {
+        if (line.startsWith('$ cd')) {
+            const command = line.substring(5)
+            if (command === "..") {
+                directories.pop()
+            } else {
+                directories.push(command)
+            }
+        }
+        if (!isNaN(parseInt(line[0]))) {
+            const number = line.split(' ')
+            let key = ""
+            for (let i = 0; i < directories.length; i++) {
+                key += directories[i]
+                let totalNumber = parseInt(number[0])
+                if (map.get(key)) {
+                    totalNumber += parseInt(map.get(key))
+                }
+                map.set(key, totalNumber)
+            }
+        }
+    }
+    spaceAvailable -= map.get('/')
+    for (const value of map) {
+        const differenceResult = Math.abs(result - spaceNeeded)
+        const differenceValue = Math.abs((spaceAvailable + value[1]) - spaceNeeded)
+        if (spaceAvailable + value[1] >= spaceNeeded && differenceValue < differenceResult) {
+            result = value[1]
+        }
+    }
+    console.log(result)
+}
 
-
-
-
-
-
-console.log(parse(formatted))
+export { run1, run2 }

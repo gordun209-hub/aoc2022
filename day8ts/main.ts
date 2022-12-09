@@ -1,0 +1,2 @@
+const solution1 = readFileSync('input.txt', 'utf8').
+    split('\n').map(line => line.split('').map(tree => parseInt(tree))).reduce((acc, row, i, arr) => acc + row.reduce((acc, curr, j) => acc + ((!row.slice(0, j).some(t => t >= curr) || !row.slice(j + 1).some(t => t >= curr) || !arr.slice(0, i).map(r => r[j]).some(t => t >= curr) || !arr.slice(i + 1).map(r => r[j]).some(t => t >= curr)) ? 1 : 0), 0), 0);
