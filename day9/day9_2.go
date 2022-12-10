@@ -22,11 +22,8 @@ func (r *Rope) clear() {
 	}
 	r.TwoDVector[r.TailLocation[0]][r.TailLocation[1]] = "T"
 	r.TwoDVector[r.HeadLocation[0]][r.HeadLocation[1]] = "H"
-	fmt.Println(r.TailLocation)
-	fmt.Println(r.HeadLocation)
+	r.TwoDVector[4][0] = "s"
 }
-
-const Edges = 4
 
 func (r Rope) Move(direction string, numverOfMove int) {
 	for i := 0; i <= numverOfMove-1; i++ {
@@ -34,8 +31,8 @@ func (r Rope) Move(direction string, numverOfMove int) {
 
 		case "U":
 			r.clear()
-			r.MoveTail()
 			r.HeadLocation[0] = r.HeadLocation[0] - 1
+			r.MoveTail()
 			r.Print()
 		case "D":
 			r.clear()
@@ -54,13 +51,13 @@ func (r Rope) Move(direction string, numverOfMove int) {
 			r.Print()
 
 		}
-
-		r.TwoDVector[4][0] = "s"
 	}
 }
 
 func (r *Rope) DoesTailNeedToMove() bool {
 	if !r.isDiagonalAdj() && !r.isVerticalOrHorizontalAdj() && !r.isOverlappingWithHead() {
+		fmt.Println(r.HeadLocation, r.TailLocation)
+		fmt.Println("movela")
 		return true
 	}
 	return false
@@ -95,8 +92,6 @@ func (r *Rope) isVerticalOrHorizontalAdj() bool {
 func (r *Rope) MoveTail() {
 	// same row
 	if r.DoesTailNeedToMove() {
-
-		fmt.Println(r.HeadLocation, r.TailLocation)
 		if r.HeadLocation[0] == r.TailLocation[0] {
 			if r.HeadLocation[1] > r.TailLocation[1] {
 				r.TailLocation[1]++
@@ -111,6 +106,23 @@ func (r *Rope) MoveTail() {
 				r.TailLocation[0]--
 			}
 		}
+		if r.HeadLocation[0] > r.TailLocation[0] && r.HeadLocation[1] > r.TailLocation[1] {
+			r.TailLocation[0]++
+			r.TailLocation[1]++
+		}
+		if r.HeadLocation[0] > r.TailLocation[0] && r.HeadLocation[1] < r.TailLocation[1] {
+			r.TailLocation[0]++
+			r.TailLocation[1]--
+		}
+		if r.HeadLocation[0] < r.TailLocation[0] && r.HeadLocation[1] > r.TailLocation[1] {
+			r.TailLocation[0]--
+			r.TailLocation[1]++
+		}
+		if r.HeadLocation[0] < r.TailLocation[0] && r.HeadLocation[1] < r.TailLocation[1] {
+			r.TailLocation[0]--
+			r.TailLocation[1]--
+		}
+
 	}
 }
 
@@ -139,10 +151,16 @@ func Maim() {
 	}
 
 	R.Move("R", 4)
-	R.Move("U", 1)
-	// R.Move("L", 0)
-	R.TwoDVector[R.TailLocation[0]][R.TailLocation[1]] = "T"
-	R.TwoDVector[R.HeadLocation[0]][R.HeadLocation[1]] = "H"
+	R.Move("U", 4)
+	R.Move("L", 3)
+	R.Move("D", 1)
+	R.Move("R", 4)
+	R.Move("D", 1)
+	R.Move("L", 5)
+	R.Move("R", 2)
+	fmt.Println(R.isOverlappingWithHead())
+	R.clear()
+	R.Print()
 }
 
 func (r *Rope) Print() {
