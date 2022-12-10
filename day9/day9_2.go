@@ -2,28 +2,29 @@ package day9
 
 import (
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
 
 type TwoDVector = [][]string
 
 type Rope struct {
-	TwoDVector    TwoDVector
-	StartingPoint []int
-	HeadLocation  []int
-	TailLocation  []int
-	twodvector    TwoDVector
+	TwoDVector             TwoDVector
+	StartingPoint          []int
+	HeadLocation           []int
+	TailLocation           []int
+	VisitedNumberByTail    *int
+	visitedLocationsByTail [][]int
 }
 
 func (r *Rope) clear() {
-	for i := range r.TwoDVector {
-		for j := range r.TwoDVector[i] {
-			r.TwoDVector[i][j] = "."
-		}
-	}
-	r.TwoDVector[r.TailLocation[0]][r.TailLocation[1]] = "T"
-	r.TwoDVector[r.HeadLocation[0]][r.HeadLocation[1]] = "H"
-	r.TwoDVector[4][0] = "s"
 }
+
+var (
+	visitedPoints [][]int
+	totalVisited  = 1
+)
 
 func (r Rope) Move(direction string, numverOfMove int) {
 	for i := 0; i <= numverOfMove-1; i++ {
@@ -33,22 +34,18 @@ func (r Rope) Move(direction string, numverOfMove int) {
 			r.clear()
 			r.HeadLocation[0] = r.HeadLocation[0] - 1
 			r.MoveTail()
-			r.Print()
 		case "D":
 			r.clear()
 			r.HeadLocation[0] = r.HeadLocation[0] + 1
 			r.MoveTail()
-			r.Print()
 		case "L":
 			r.clear()
 			r.HeadLocation[1] = r.HeadLocation[1] - 1
 			r.MoveTail()
-			r.Print()
 		case "R":
 			r.clear()
 			r.HeadLocation[1] = r.HeadLocation[1] + 1
 			r.MoveTail()
-			r.Print()
 
 		}
 	}
@@ -56,8 +53,6 @@ func (r Rope) Move(direction string, numverOfMove int) {
 
 func (r *Rope) DoesTailNeedToMove() bool {
 	if !r.isDiagonalAdj() && !r.isVerticalOrHorizontalAdj() && !r.isOverlappingWithHead() {
-		fmt.Println(r.HeadLocation, r.TailLocation)
-		fmt.Println("movela")
 		return true
 	}
 	return false
@@ -90,8 +85,11 @@ func (r *Rope) isVerticalOrHorizontalAdj() bool {
 }
 
 func (r *Rope) MoveTail() {
-	// same row
+	// push to visitedPoints if point change, if it is first time visit, increase number
+	tailx, taily := r.TailLocation[0], r.TailLocation[1]
+
 	if r.DoesTailNeedToMove() {
+
 		if r.HeadLocation[0] == r.TailLocation[0] {
 			if r.HeadLocation[1] > r.TailLocation[1] {
 				r.TailLocation[1]++
@@ -124,6 +122,20 @@ func (r *Rope) MoveTail() {
 		}
 
 	}
+
+	if tailx != r.TailLocation[0] || taily != r.TailLocation[1] {
+		r.addVisitedLocation()
+	}
+	// If the new tail location has not been visited, add it to the visitedPoints slice and increment totalVisited
+}
+
+var visitedLocationsByTail [][]int
+
+func (r *Rope) addVisitedLocation() {
+	copy := make([]int, len(r.TailLocation))
+	copy[0] = r.TailLocation[0]
+	copy[1] = r.TailLocation[1]
+	visitedLocationsByTail = append(visitedLocationsByTail, copy)
 }
 
 func (r *Rope) isOverlappingWithHead() bool {
@@ -140,27 +152,27 @@ func (r *Rope) isOverlappingWithHead() bool {
 
 func Maim() {
 	V := generateVector(5, 6)
-	TailVisiteds := generateVector(5, 6)
-	fillVectorWithDots(TailVisiteds)
 	fillVectorWithDots(V)
-	R := Rope{
-		TwoDVector:    V,
-		StartingPoint: []int{4, 0},
-		HeadLocation:  []int{4, 0},
-		TailLocation:  []int{4, 0},
+	R := &Rope{
+		TwoDVector:             V,
+		StartingPoint:          []int{4, 0},
+		HeadLocation:           []int{4, 0},
+		TailLocation:           []int{4, 0},
+		visitedLocationsByTail: [][]int{},
+		VisitedNumberByTail:    &totalVisited,
 	}
 
-	R.Move("R", 4)
-	R.Move("U", 4)
-	R.Move("L", 3)
-	R.Move("D", 1)
-	R.Move("R", 4)
-	R.Move("D", 1)
-	R.Move("L", 5)
-	R.Move("R", 2)
-	fmt.Println(R.isOverlappingWithHead())
-	R.clear()
-	R.Print()
+	lines := getInput()
+	for _, line := range lines {
+		direction, numberOfMove := getDirection(line), getNumberOfMove(line)
+		num, _ := strconv.Atoi(numberOfMove)
+		R.Move(direction, num)
+	}
+	total := 0
+	for range visitedLocationsByTail {
+		total++
+	}
+	fmt.Println(total)
 }
 
 func (r *Rope) Print() {
@@ -190,133 +202,27 @@ func fillVectorWithDots(vector TwoDVector) {
 	}
 }
 
-// func (r *Rope) AdjacentPointsAreaToHead() [][]int {
-// 	head := r.HeadLocation
-// 	adjacentPoints := [][]int{}
-// 	// check if the head is not on the edge of the vector
-// 	if head[0] != 0 {
-// 		adjacentPoints = append(adjacentPoints, []int{head[0] - 1, head[1]})
-// 	}
-// 	if head[0] != len(r.TwoDVector)-1 {
-// 		adjacentPoints = append(adjacentPoints, []int{head[0] + 1, head[1]})
-// 	}
-// 	if head[1] != 0 {
-// 		adjacentPoints = append(adjacentPoints, []int{head[0], head[1] - 1})
-// 	}
-// 	if head[1] != len(r.TwoDVector[0])-1 {
-// 		adjacentPoints = append(adjacentPoints, []int{head[0], head[1] + 1})
-// 	}
-//
-// 	if head[0] != 0 && head[1] != 0 {
-// 		adjacentPoints = append(adjacentPoints, []int{head[0] - 1, head[1] - 1})
-// 	}
-//
-// 	if head[0] != 0 && head[1] != len(r.TwoDVector[0])-1 {
-// 		adjacentPoints = append(adjacentPoints, []int{head[0] - 1, head[1] + 1})
-// 	}
-//
-// 	return adjacentPoints
-// }
-//
-// func isAdjacentPoint(point, tail []int) bool {
-// 	if (point[0] == tail[0] &&
-// 		(point[1] == tail[1]+1 || point[1] == tail[1]-1)) ||
-// 		(point[1] == tail[1] && (point[0] == tail[0]+1 ||
-// 			point[0] == tail[0]-1)) {
-// 		return true
-// 	}
-// 	if point[0] == tail[0] && point[1] == tail[1] {
-// 		return true
-// 	}
-// 	return false
-// }
-//
-// func (r *Rope) Move(direction string, numberOfMove int) {
-// 	// fmt.Println("Moving ", direction, numberOfMove)
-// 	switch direction {
-// 	case "R":
-// 		r.moveRight(numberOfMove)
-// 	}
-// }
-//
-// func (r *Rope) MoveTailToAdjacentPoint() {
-// 	adjacentPoints := r.AdjacentPointsAreaToHead()
-// 	for _, point := range adjacentPoints {
-// 		if r.TailLocation[0] == point[0] && r.TailLocation[1] == point[1] {
-// 			continue
-// 		}
-// 	}
-// }
-//
-// func (r *Rope) moveRight(numberOfMove int) {
-// 	for i := 0; i < numberOfMove; i++ {
-// 		r.HeadLocation[1]++
-//
-// 		adjpoints := r.AdjacentPointsAreaToHead()
-// 		// if tail inside adjacent points dont move
-// 		// else move tail to adjacent point
-// 		for _, point := range adjpoints {
-// 			if isAdjacentPoint(point, r.TailLocation) {
-// 				continue
-// 			}
-// 		}
-//
-// 	}
-// }
-//
-// func Maim() {
-// 	// lines := getInput()
-// 	// AdjacentPointsAreaToHead
-// 	// adjacentPoints
-// 	// isAdjacentPoint
-// 	// MoveTailToAdjacentPoint
-// 	// moveRight
-// 	vec := create2DVector(5, 6)
-// 	vec2 := create2DVector(5, 6)
-// 	rope := Rope{
-// 		TwoDVector:             vec,
-// 		StartingPoint:          []int{4, 0},
-// 		HeadLocation:           []int{4, 0},
-// 		TailLocation:           []int{4, 0},
-// 		visitedLocationsByTail: vec2,
-// 	}
-// 	rope.HeadLocation = []int{4, 0}
-// 	fmt.Println(rope.HeadLocation, rope.TailLocation)
-//
-// 	rope.Move("R", 1)
-// 	fmt.Println(rope.AdjacentPointsAreaToHead())
-// 	// rope.UpdateTailLocation()
-//
-// 	// rope.Move("U", 3)
-// 	// rope.Move("D", 1)
-// 	// rope.Move("R", 4)
-// 	// rope.Move("D", 1)
-// 	// rope.Move("L", 5)
-// 	// rope.Move("R", 2)
-//
-// 	rope.TwoDVector[4][0] = "s"
-// }
-//
 // /*  Util Functions */
-// func getDirection(s string) string {
-// 	return s[0:1]
-// }
-//
-// func getNumberOfMove(s string) string {
-// 	return s[2:3]
-// }
-//
-// func printVector(s TwoDVector) {
-// 	for _, line := range s {
-// 		fmt.Println(line)
-// 	}
-// }
-//
-// func getInput() []string {
-// 	input, _ := os.ReadFile("sample9.txt")
-// 	lines := strings.Split(string(input), "\n")[:8]
-// 	return lines
-// }
+func getDirection(s string) string {
+	return s[0:1]
+}
+
+func getNumberOfMove(s string) string {
+	return s[2:3]
+}
+
+//	func printVector(s TwoDVector) {
+//		for _, line := range s {
+//			fmt.Println(line)
+//		}
+//	}
+func getInput() []string {
+	input, _ := os.ReadFile("input9.txt")
+	lines := strings.Split(string(input), "\n")[:2000]
+	fmt.Println(lines)
+	return lines
+}
+
 //
 // /* Generating 2d vector */
 // func create2DVector(vs, hs int) TwoDVector {
