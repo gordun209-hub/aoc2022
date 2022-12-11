@@ -24,8 +24,8 @@ type TwoDV struct {
 	col         map[int]int
 }
 
-func newVec(row, col map[int]int, size int) TwoDV {
-	return *&TwoDV{
+func newVec(row, col map[int]int, size int) *TwoDV {
+	return &TwoDV{
 		row:         row,
 		col:         col,
 		size:        size,
