@@ -3,7 +3,8 @@ package main
 import (
 	_ "github.com/gordun209-hub/aoc2022/day1"
 	_ "github.com/gordun209-hub/aoc2022/day10"
-	d11 "github.com/gordun209-hub/aoc2022/day11"
+	_ "github.com/gordun209-hub/aoc2022/day11"
+	d12 "github.com/gordun209-hub/aoc2022/day12"
 	_ "github.com/gordun209-hub/aoc2022/day2"
 	_ "github.com/gordun209-hub/aoc2022/day3"
 	_ "github.com/gordun209-hub/aoc2022/day4"
@@ -15,5 +16,5 @@ import (
 )
 
 func main() {
-	d11.Maim()
+	d12.Maim()
 }
