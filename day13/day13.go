@@ -1,88 +1,116 @@
 package day13
 
-import (
-	"fmt"
-	"strings"
-)
-
-const input = `[1,1,3,1,1]
-[1,1,5,1,1]
-
-[[1],[2,3,4]]
-[[1],4]
-
-[9]
-[[8,7,6]]
-
-[[4,4],4,4]
-[[4,4],4,4,4]
-
-[7,7,7,7]
-[7,7,7]
-
-[]
-[3]
-
-[[[]]]
-[[]]
-
-[1,[2,[3,[4,[5,6,7]]]],8,9]
-[1,[2,[3,[4,[5,6,0]]]],8,9]`
-
-type pair struct {
-	first  string
-	second string
-	id     int
-}
-
-// need to create arrays or smth idk im 8
-// ex
-// takes
-// [1, [2]] and []
-// compares
-// 1 and []
-// result true
-
-// compare [[4,4] ,4,4] vs [[4,4],4,4,4]
-
-func (p *pair) compare(fst, scnd string) bool {
-	trimmedright := replaceFirstBracket(fst)
-	trimmedleft := replaceFirstBracket(scnd)
-	fmt.Println(trimmedleft, "una", trimmedright)
-	return true
-}
-
-func replaceFirstBracket(s string) string {
-	return strings.Replace(s, "[", "", 1)
-}
-
-func isMixedType(s string) bool {
-	return strings.Contains(s, "[")
-}
-
-var id int
-
-func Maim() {
-	// start from beginin remove starting [ bruh
-
-	lines := lines()
-	for _, line := range lines {
-		pair := initializePair(line)
-		pair.compare(pair.first, pair.second)
-
-	}
-}
-
-func removeBrackets(s string) string {
-	return strings.ReplaceAll(s, "[", "")
-}
-
-func lines() []string {
-	return strings.Split(string(input), "\n\n")
-}
-
-func initializePair(s string) *pair {
-	pairs := strings.Split(s, "\n")
-	id++
-	return &pair{pairs[0], pairs[1], id}
-}
+//
+// import (
+// 	"bufio"
+// 	"bytes"
+// 	"encoding/json"
+// 	"fmt"
+// 	"math"
+// 	"os"
+// 	"sort"
+// )
+//
+// type (
+// 	count                  int
+// 	SortableInterfaceSlice []interface{}
+// )
+//
+// func Maim() {
+// 	content, _ := os.ReadFile("input13.txt")
+// 	contentReader := bytes.NewReader(content)
+// 	scanner := bufio.NewScanner(contentReader)
+// 	scanner.Split(bufio.ScanLines)
+//
+// 	sum := 0
+// 	index := 1
+// 	for scanner.Scan() {
+// 		Frow := scanner.Text()
+//
+// 		if len(Frow) == 0 {
+// 			continue
+// 		}
+//
+// 		if !scanner.Scan() {
+// 			fmt.Println("zmm")
+// 		}
+// 		Srow := scanner.Text()
+//
+// 		left := buildSlice(Frow)
+// 		right := buildSlice(Srow)
+//
+// 		if CompareSlice(left, right) == 0 {
+// 			sum += index
+// 		}
+//
+// 		index++
+// 	}
+//
+// 	fmt.Println(sum)
+// }
+//
+// func sortSlice(input SortableInterfaceSlice) {
+// 	sort.Slice(input, func(i, j int) bool {
+// 		return input[i].(float64) < input[j].(float64)
+// 	})
+// }
+//
+// func CompareSlice(L, R interface{}) count {
+// 	isLeftSlice, isRightSlice := isSlice(L), isSlice(R)
+//
+// 	// make it slice if itsnt
+// 	if !isLeftSlice && isRightSlice {
+// 		return CompareSlice([]interface{}{L}, R)
+// 	} else if isLeftSlice && !isRightSlice {
+// 		return CompareSlice(L, []interface{}{R})
+// 	}
+//
+// 	leftSlice, rightSlice := L.([]interface{}), R.([]interface{})
+// 	minLen := int(math.Min(float64(len(leftSlice)), float64(len(rightSlice))))
+//
+// 	for i := 0; i < minLen; i++ {
+// 		L, R := leftSlice[i], rightSlice[i]
+//
+// 		if isSlice(L) || isSlice(R) {
+// 			if result := CompareSlice(L, R); result != 2 {
+// 				return result
+// 			}
+// 			continue
+// 		}
+//
+// 		if L.(float64) > R.(float64) {
+// 			return 1
+// 		}
+//
+// 		if L.(float64) < R.(float64) {
+// 			return 0
+// 		}
+// 	}
+//
+// 	if len(rightSlice) == len(leftSlice) {
+// 		return 2
+// 	}
+//
+// 	if len(rightSlice) == minLen && len(leftSlice) != minLen {
+// 		return 1
+// 	}
+//
+// 	return 0
+// }
+//
+// func buildSlice(str string) []interface{} {
+// 	var output []interface{}
+// 	err := json.Unmarshal([]byte(str), &output)
+// 	if err != nil {
+// 		fmt.Println("una")
+// 	}
+// 	return output
+// }
+//
+// func isSlice(input interface{}) bool {
+// 	switch input.(type) {
+// 	case []interface{}:
+// 		return true
+// 	}
+// 	return false
+// }
