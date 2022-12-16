@@ -43,7 +43,7 @@ func (t Trace) MaxDist() (int, int, int, int) {
 
 	}
 
-	return maxX, maxY, minX, minY
+	return maxX + 1, maxY + 1, minX, minY
 }
 
 func (t Points) getMaxX() int {
@@ -113,43 +113,71 @@ func (g *Grid) OneUp(c Point) Point {
 	return Point{x: c.x + 1, y: c.y}
 }
 
-func (g *Grid) dropSand() {
-	dropPoint := Point{500, 0}
-
-	g.set(dropPoint, SAND)
-	g.set((Point{500, 2}), SAND)
-}
-
 func (g *Grid) set(p Point, s string) {
 	g.data[p.x][p.y] = s
+}
+
+func (g *Grid) fillBetween(p []Point, s string) {
+	// Loop through the points and set the value in the grid
+	for i := 0; i < len(p)-1; i++ {
+		x1, y1 := p[i].x, p[i].y
+		x2, y2 := p[i+1].x, p[i+1].y
+
+		// If the x values are the same, fill the cells between the y values
+		if x1 == x2 {
+			if y1 <= y2 {
+				for y := y1; y <= y2; y++ {
+					g.set(Point{x1, y}, s)
+				}
+			} else {
+				for y := y2; y <= y1; y++ {
+					g.set(Point{x1, y}, s)
+				}
+			}
+		} else if y1 == y2 {
+			// If the y values are the same, fill the cells between the x values
+			if x1 <= x2 {
+				for x := x1; x <= x2; x++ {
+					g.set(Point{x, y1}, s)
+				}
+			} else {
+				for x := x2; x <= x1; x++ {
+					g.set(Point{x, y1}, s)
+				}
+			}
+		}
+	}
 }
 
 func Maim() {
 	trace := getTrace()
 	maxX, maxY, _, _ := trace.MaxDist()
-	grid := getGrid(maxY+1, maxX+1)
+	grid := getGrid(maxY, maxX)
 
-	for i, inst := range grid.data {
-		for j := range inst {
-			p := Point{j, i}
-			grid.set(p, AIR)
-		}
-	}
 	for _, inst := range trace.ps {
-		for _, l := range inst {
-			grid.set(l, ROCK)
+		grid.fillBetween(inst, "#")
+	}
+	cunt := 0
+	for i := 0; i <= len(grid.data[0])-1; i++ {
+		for j := 0; j <= len(grid.data)-1; j++ {
+			p := Point{j, i}
+			if grid.data[j][i] != "#" {
+				grid.set(p, AIR)
+			} else {
+				cunt++
+			}
 		}
 	}
-	start := Point{500, 0}
-	grid.set(start, "+")
-	grid.dropSand()
+
 	grid.print()
 }
 
+// 2. verdimiz yatay 1. verdimiz dikey aga
 func getGrid(x, y int) Grid {
-	grid := Grid{data: make([][]string, x)}
+	grid := Grid{data: make([][]string, y)}
+
 	for i := range grid.data {
-		grid.data[i] = make([]string, y)
+		grid.data[i] = make([]string, x)
 	}
 	return grid
 }
@@ -157,9 +185,9 @@ func getGrid(x, y int) Grid {
 func getTrace() Trace {
 	file, _ := os.ReadFile("input14.txt")
 
-	lines := split(string(file), "\n")
+	lines := split(string(file), "\n")[:182]
 	trace := Trace{}
-	for _, line := range lines[:182] {
+	for _, line := range lines {
 		points := split(line, " -> ")
 		pointss := []Point{}
 		for _, v := range points {
@@ -167,7 +195,7 @@ func getTrace() Trace {
 			k := split(v, ",")
 			x := toInt(k[0])
 			y := toInt(k[1])
-			pointss = append(pointss, Point{x: x, y: y})
+			pointss = append(pointss, Point{x: y, y: x})
 
 		}
 		trace.ps = append(trace.ps, pointss)

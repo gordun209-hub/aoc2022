@@ -19,4 +19,8 @@ import (
 
 func main() {
 	d14.Maim()
+	// [x+1, y] = down
+	// [x-1,y] = up
+	// [x,y+1] = right
+	// [x,y-1] = left
 }
